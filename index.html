@@ -4,197 +4,367 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>一番賞抽獎</title>
+
   <style>
     :root{
-      --bg:#0b1020; --card:#111a33; --card2:#0f1730; --txt:#e9eeff; --muted:#a9b3d6;
-      --ok:#4ade80; --warn:#fbbf24; --bad:#fb7185; --line:rgba(255,255,255,.12);
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --bg1:#0a0f2a;
+      --bg2:#0b2b5a;
+      --txt:#f7f8ff;
+      --muted: rgba(255,255,255,.78);
+      --line: rgba(255,255,255,.22);
+
+      --accent1:#7c3aed;   /* 紫 */
+      --accent2:#22d3ee;   /* 青 */
+      --accent3:#f472b6;   /* 粉 */
+      --accent4:#fbbf24;   /* 金 */
+
+      --shadow: 0 24px 80px rgba(0,0,0,.40);
+      --shadow2: 0 16px 40px rgba(0,0,0,.35);
+      --radius: 22px;
     }
+
     *{box-sizing:border-box}
     body{
-      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", Arial;
-      background: radial-gradient(1000px 500px at 20% 10%, rgba(99,102,241,.25), transparent 60%),
-                  radial-gradient(900px 480px at 80% 30%, rgba(34,211,238,.18), transparent 60%),
-                  var(--bg);
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", Arial;
       color:var(--txt);
       min-height:100vh;
-      display:flex; justify-content:center; padding:24px;
+      display:flex;
+      justify-content:center;
+      padding:26px;
+
+      background:
+        radial-gradient(900px 500px at 15% 10%, rgba(244,114,182,.35), transparent 60%),
+        radial-gradient(1100px 600px at 85% 15%, rgba(34,211,238,.35), transparent 60%),
+        radial-gradient(900px 520px at 55% 95%, rgba(124,58,237,.28), transparent 60%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
     }
-    .wrap{width:min(980px,100%);}
+
+    /* 漂浮亮點 */
+    body:before{
+      content:"";
+      position:fixed;
+      inset:-40px;
+      pointer-events:none;
+      background:
+        radial-gradient(10px 10px at 10% 20%, rgba(255,255,255,.35), transparent 60%),
+        radial-gradient(12px 12px at 30% 10%, rgba(255,255,255,.25), transparent 60%),
+        radial-gradient(9px 9px at 70% 18%, rgba(255,255,255,.30), transparent 60%),
+        radial-gradient(11px 11px at 85% 28%, rgba(255,255,255,.22), transparent 60%),
+        radial-gradient(8px 8px at 60% 86%, rgba(255,255,255,.22), transparent 60%),
+        radial-gradient(10px 10px at 20% 82%, rgba(255,255,255,.20), transparent 60%);
+      opacity:.8;
+      animation: floaty 10s ease-in-out infinite alternate;
+    }
+    @keyframes floaty{ 0%{transform: translateY(0px)} 100%{transform: translateY(14px)} }
+
+    .wrap{width:min(1000px,100%);}
+
     .hero{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius:20px;
-      box-shadow: var(--shadow);
+      position:relative;
+      border-radius: var(--radius);
       padding:18px 18px 14px;
-      display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
       flex-wrap:wrap;
-    }
-    h1{margin:0 0 6px; font-size:20px; letter-spacing:.5px}
-    .sub{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-    input{
-      background: rgba(255,255,255,.06);
+
+      background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.10));
       border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .hero:after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: linear-gradient(90deg,
+        rgba(244,114,182,.0),
+        rgba(244,114,182,.45),
+        rgba(34,211,238,.45),
+        rgba(124,58,237,.45),
+        rgba(244,114,182,.0)
+      );
+      opacity:.45;
+      filter: blur(18px);
+      z-index:0;
+      animation: shimmer 5.5s linear infinite;
+    }
+    @keyframes shimmer{ 0%{transform: translateX(-25%)} 100%{transform: translateX(25%)} }
+    .hero > *{position:relative; z-index:1;}
+
+    h1{margin:0 0 6px; font-size:20px; letter-spacing:.6px}
+    .sub{margin:0; color:var(--muted); font-size:13px; line-height:1.6}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+    input{
+      background: rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.28);
       color:var(--txt);
       padding:10px 12px;
-      border-radius:12px;
+      border-radius:14px;
       outline:none;
-      min-width:220px;
+      min-width:240px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
     }
-    input:focus{border-color: rgba(99,102,241,.7); box-shadow: 0 0 0 3px rgba(99,102,241,.18)}
+    input::placeholder{color: rgba(255,255,255,.72)}
+    input:focus{
+      border-color: rgba(34,211,238,.75);
+      box-shadow: 0 0 0 4px rgba(34,211,238,.18), inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+
     button{
       cursor:pointer;
-      border:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(99,102,241,.35), rgba(99,102,241,.18));
+      border:1px solid rgba(255,255,255,.28);
       color:var(--txt);
       padding:10px 14px;
-      border-radius:12px;
-      font-weight:600;
-      letter-spacing:.2px;
-      transition:.15s transform ease, .15s filter ease;
+      border-radius:14px;
+      font-weight:900;
+      letter-spacing:.3px;
+      transition:.15s transform ease, .15s filter ease, .15s box-shadow ease;
+
+      background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.10));
+      box-shadow: var(--shadow2);
     }
-    button:hover{filter:brightness(1.08)}
+    button:hover{filter:brightness(1.10)}
     button:active{transform:translateY(1px)}
-    button.secondary{
-      background: rgba(255,255,255,.06);
-      font-weight:600;
+    button:disabled{opacity:.55; cursor:not-allowed; filter:saturate(.8)}
+
+    button.primary{
+      background: linear-gradient(135deg, rgba(244,114,182,.35), rgba(34,211,238,.30), rgba(124,58,237,.32));
+      border-color: rgba(255,255,255,.34);
+      box-shadow:
+        0 18px 50px rgba(34,211,238,.18),
+        0 18px 50px rgba(244,114,182,.16),
+        var(--shadow2);
     }
-    button.danger{
-      background: linear-gradient(180deg, rgba(251,113,133,.35), rgba(251,113,133,.18));
-    }
+    button.secondary{ background: rgba(255,255,255,.13); }
+    button.danger{ background: linear-gradient(135deg, rgba(251,113,133,.40), rgba(244,114,182,.20)); }
+
     .grid{
       margin-top:16px;
       display:grid;
-      grid-template-columns: 1.1fr .9fr;
+      grid-template-columns: 1.12fr .88fr;
       gap:14px;
     }
     @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
 
     .panel{
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius:20px;
-      box-shadow: var(--shadow);
+      border-radius: var(--radius);
       overflow:hidden;
+      border:1px solid rgba(255,255,255,.22);
+      background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
     }
     .panel .hd{
       padding:12px 14px;
-      border-bottom:1px solid var(--line);
-      display:flex; justify-content:space-between; align-items:center; gap:10px;
-      background: rgba(0,0,0,.15);
+      border-bottom:1px solid rgba(255,255,255,.18);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      background: rgba(0,0,0,.12);
     }
     .panel .bd{ padding:14px; }
-    .tag{
-      font-size:12px; color:var(--muted);
-      padding:6px 10px; border:1px solid var(--line); border-radius:999px;
-      background: rgba(255,255,255,.04);
-    }
 
-    /* 抽獎卡 */
-    .reveal{
-      display:grid; place-items:center;
-      padding:20px 14px 22px;
-      min-height:260px;
-      background: radial-gradient(800px 380px at 50% 10%, rgba(99,102,241,.25), transparent 60%),
-                  rgba(0,0,0,.12);
-    }
-    .card{
-      width:min(520px,100%);
-      border-radius:22px;
-      border:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      box-shadow: 0 25px 90px rgba(0,0,0,.6);
-      overflow:hidden;
-      transform-style:preserve-3d;
-    }
-    .card .face{
-      padding:18px 18px 16px;
-      display:flex; flex-direction:column; gap:10px;
-    }
-    .face .title{
-      font-size:18px; font-weight:800; letter-spacing:.6px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-    .badge{
-      font-size:12px; padding:6px 10px; border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.05);
-      color: var(--muted);
+    .tag{
+      font-size:12px;
+      color: rgba(255,255,255,.86);
+      padding:6px 10px;
+      border:1px solid rgba(255,255,255,.22);
+      border-radius:999px;
+      background: rgba(255,255,255,.10);
       white-space:nowrap;
     }
-    .big{
-      font-size:28px; font-weight:900;
-      line-height:1.1;
-    }
-    .desc{color:var(--muted); font-size:14px; line-height:1.55}
-    .who{color:rgba(255,255,255,.9); font-weight:700}
-    .flash{
-      height:8px;
-      background: linear-gradient(90deg, rgba(34,211,238,.0), rgba(34,211,238,.9), rgba(34,211,238,.0));
-      filter: blur(.2px);
-      opacity:.0;
+
+    .reveal{
+      position:relative;
+      display:grid;
+      place-items:center;
+      padding:20px 14px 22px;
+      min-height:290px;
+      background:
+        radial-gradient(900px 380px at 50% 0%, rgba(251,191,36,.26), transparent 55%),
+        radial-gradient(900px 380px at 30% 20%, rgba(34,211,238,.18), transparent 60%),
+        rgba(0,0,0,.10);
+      overflow:hidden;
     }
 
-    /* 翻牌動畫 */
-    .flip{
-      animation: flip 900ms cubic-bezier(.2,.85,.2,1) both;
+    .card{
+      width:min(560px,100%);
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.25);
+      background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+      box-shadow: 0 30px 120px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06) inset;
+      overflow:hidden;
+      transform-style:preserve-3d;
+      position:relative;
     }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: conic-gradient(from 180deg,
+        rgba(251,191,36,.0),
+        rgba(251,191,36,.65),
+        rgba(34,211,238,.55),
+        rgba(124,58,237,.55),
+        rgba(244,114,182,.55),
+        rgba(251,191,36,.65),
+        rgba(251,191,36,.0)
+      );
+      filter: blur(18px);
+      opacity:.35;
+      pointer-events:none;
+    }
+
+    .flash{
+      height:10px;
+      background: linear-gradient(90deg,
+        rgba(251,191,36,.0),
+        rgba(251,191,36,.95),
+        rgba(34,211,238,.9),
+        rgba(244,114,182,.9),
+        rgba(124,58,237,.9),
+        rgba(251,191,36,.0)
+      );
+      opacity:0;
+    }
+
+    .card .face{
+      position:relative;
+      padding:18px 18px 16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .face .title{
+      font-size:18px;
+      font-weight:1000;
+      letter-spacing:.7px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .badge{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.10);
+      color: rgba(255,255,255,.86);
+      white-space:nowrap;
+    }
+
+    .big{
+      font-size:30px;
+      font-weight:1100;
+      line-height:1.1;
+      text-shadow: 0 10px 40px rgba(0,0,0,.35);
+    }
+
+    .desc{
+      color: rgba(255,255,255,.86);
+      font-size:14px;
+      line-height:1.6;
+      white-space:pre-line;
+    }
+
+    .who{
+      color: #ffffff;
+      font-weight:1000;
+      text-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    .note{margin:10px 0 0; color: rgba(255,255,255,.78); font-size:12px; line-height:1.6}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+    .hint{color: rgba(255,255,255,.92)}
+    .accentText{
+      background: linear-gradient(90deg, rgba(251,191,36,.95), rgba(34,211,238,.95), rgba(244,114,182,.95));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight:1100;
+    }
+
+    .flip{ animation: flip 900ms cubic-bezier(.2,.85,.2,1) both; }
     @keyframes flip{
-      0%{transform: rotateY(0deg) scale(.98); filter:brightness(.9)}
-      45%{transform: rotateY(90deg) scale(1.02); filter:brightness(1.05)}
+      0%{transform: rotateY(0deg) scale(.985); filter:brightness(.95)}
+      40%{transform: rotateY(92deg) scale(1.02); filter:brightness(1.08)}
       100%{transform: rotateY(0deg) scale(1); filter:brightness(1)}
     }
-    .glow{
-      animation: glow 1200ms ease-out both;
-    }
+    .glow{ animation: glow 1100ms ease-out both; }
     @keyframes glow{
-      0%{box-shadow: 0 0 0 rgba(34,211,238,0)}
-      35%{box-shadow: 0 0 80px rgba(34,211,238,.18)}
-      100%{box-shadow: 0 0 0 rgba(34,211,238,0)}
+      0%{box-shadow: 0 0 0 rgba(34,211,238,0), 0 0 0 rgba(251,191,36,0)}
+      35%{
+        box-shadow:
+          0 0 110px rgba(34,211,238,.18),
+          0 0 110px rgba(251,191,36,.16),
+          0 30px 120px rgba(0,0,0,.55);
+      }
+      100%{box-shadow: 0 30px 120px rgba(0,0,0,.55)}
     }
-    .flash.on{ opacity:1; animation: flash 650ms ease-out both; }
+    .flash.on{opacity:1; animation: flash 650ms ease-out both;}
     @keyframes flash{
       0%{transform:translateX(-60%); opacity:0}
       45%{opacity:1}
       100%{transform:translateX(60%); opacity:0}
     }
 
-    /* 清單 */
     table{width:100%; border-collapse:separate; border-spacing:0}
-    th,td{padding:10px 10px; font-size:13px; border-bottom:1px solid var(--line); text-align:left}
-    th{color:var(--muted); font-weight:700; background: rgba(0,0,0,.10)}
+    th,td{padding:10px 10px; font-size:13px; border-bottom:1px solid rgba(255,255,255,.16); text-align:left}
+    th{ color: rgba(255,255,255,.86); font-weight:1000; background: rgba(0,0,0,.10); }
     tr:last-child td{border-bottom:none}
-    .pill{
-      font-size:12px; font-weight:800;
-      padding:4px 9px; border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.05);
-    }
-    .pill.A{color:#fcd34d}
-    .pill.B{color:#93c5fd}
-    .pill.C{color:#86efac}
-    .pill.D,.pill.E,.pill.F{color:#e5e7eb}
-    .pill.LAST{color:#fb7185}
 
-    .note{margin:10px 0 0; color:var(--muted); font-size:12px; line-height:1.5}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
-    .hint{color:rgba(255,255,255,.85)}
+    .pill{
+      font-size:12px;
+      font-weight:1100;
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.10);
+    }
+    .pill.A{color:#ffe08a}
+    .pill.B{color:#b8d7ff}
+    .pill.C{color:#a6ffca}
+    .pill.D,.pill.E,.pill.F{color:#ffffff}
+    .pill.LAST{color:#ffd1dc}
+
+    /* ✅ 彩帶 canvas 疊在最上層 */
+    #fxCanvas{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100vh;
+      pointer-events:none;
+      z-index:9999;
+    }
   </style>
 </head>
+
 <body>
+  <canvas id="fxCanvas"></canvas>
+
   <div class="wrap">
     <div class="hero">
       <div>
-        <h1>一番賞抽獎</h1>
+        <h1>一番賞抽獎 <span class="accentText">A/B/C 彩帶爆炸版</span></h1>
         <p class="sub">
-          填角色名 → 抽獎翻牌揭曉 → 自動扣庫。<span class="hint">最後賞固定第 31 抽才會出。</span><br>
-          <span class="mono">資料會存在本機 localStorage</span>（重整不會消失）。
+          填角色名 → 抽獎翻牌揭曉 → 自動扣庫。<span class="hint">最後一位會「額外加碼」最後賞。</span><br>
+          <span class="mono">資料會存在本機 localStorage</span>（重整不會消失）。<br>
+          <span class="hint">⚠ 抽獎音效不可關閉（按下抽獎就會播）。</span>
         </p>
       </div>
       <div class="row">
         <input id="playerName" placeholder="請輸入角色名字（必填）" maxlength="24" />
-        <button id="drawBtn">抽一發！</button>
+        <button class="primary" id="drawBtn">抽一發！</button>
         <button class="secondary" id="exportBtn">匯出紀錄</button>
         <button class="secondary" id="resetBtn" title="會重置庫存與紀錄">重置整池</button>
       </div>
@@ -205,10 +375,11 @@
         <div class="hd">
           <div style="display:flex; gap:10px; align-items:center;">
             <strong>翻牌揭曉</strong>
-            <span class="tag" id="statusTag">剩餘 31 / 31</span>
+            <span class="tag" id="statusTag">剩餘 — / —</span>
           </div>
-          <span class="tag" id="lastTag">最後賞：保留中</span>
+          <span class="tag" id="lastTag">最後賞：保留中（最後加碼）</span>
         </div>
+
         <div class="reveal">
           <div class="card" id="revealCard" aria-live="polite">
             <div class="flash" id="flashBar"></div>
@@ -217,18 +388,23 @@
                 <span>等待抽獎</span>
                 <span class="badge" id="drawMeta">尚未抽出</span>
               </div>
+
               <div class="big" id="prizeBig">—</div>
+
               <div class="desc" id="prizeDesc">
-                請先輸入角色名字，然後按「抽一發！」<br>
-                抽到的獎項會從池子移除，不會重複。
+                請先輸入角色名字，然後按「抽一發！」\n
+                抽到的獎項會從池子移除，不會重複。\n
+                最後一位抽的人會額外拿到「最後賞」加碼。
               </div>
+
               <div class="desc">抽獎者：<span class="who" id="whoText">（尚未）</span></div>
             </div>
           </div>
         </div>
+
         <div class="bd">
           <p class="note">
-            小提醒：純前端版不防作弊（可清 localStorage / 改 JS）。要防作弊建議改成後端/表單儲存。
+            小提醒：純前端版不防作弊（可清 localStorage / 改 JS）。如果要防作弊，建議改成 Google Sheets / Apps Script 做後端紀錄與扣庫。
           </p>
         </div>
       </section>
@@ -238,11 +414,12 @@
           <strong>庫存與紀錄</strong>
           <span class="tag" id="poolTag">獎池就緒</span>
         </div>
+
         <div class="bd" style="padding:0">
           <table>
             <thead>
               <tr>
-                <th style="width:82px;">類別</th>
+                <th style="width:92px;">類別</th>
                 <th>獎項</th>
                 <th style="width:70px;">剩餘</th>
               </tr>
@@ -250,6 +427,7 @@
             <tbody id="poolTable"></tbody>
           </table>
         </div>
+
         <div class="bd">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
             <span class="tag" id="logTag">已抽 0 人</span>
@@ -264,67 +442,57 @@
 <script>
 /**
  * 一番賞抽獎（純前端）
- * - 31 個名額：其中「最後賞」保留到最後一抽
- * - 其餘 30 個名額按權重（實際名額數）隨機抽
- * - 會存 localStorage：庫存、已抽紀錄、已用角色名（避免重複抽）
+ * ✅ 最後賞 = 最後一位加碼（bonus），不取代最後一抽。
+ * ✅ A/B/C 會有不同彩帶動畫。
+ * ✅ 抽獎音效不可關閉：每次抽獎按鈕觸發都會播（使用 Web Audio 合成）。
  */
 
-const STORAGE_KEY = "ichiban_lottery_v1";
+const STORAGE_KEY = "ichiban_lottery_v3_bonus_last_confetti_sound";
 
+/** ✅ 你指定：F = 13，A~F 合計 32 抽 / 32 人 */
 const PRIZES = [
-  { key: "A", label: "A賞", desc: "2580時裝 × 1套", count: 1 },
-  { key: "B", label: "B賞", desc: "1280時裝 × 2套", count: 2 },
-  { key: "C", label: "C賞", desc: "680時裝 × 3套",  count: 3 },
-  { key: "D", label: "D賞", desc: "300長鳴珠 × 5位", count: 5 },
-  { key: "E", label: "E賞", desc: "180長鳴珠 × 10位", count: 10 },
-  { key: "F", label: "F賞", desc: "60長鳴珠 × 10位",  count: 10 },
-  // 最後賞單獨處理：第 31 抽一定給
-  { key: "LAST", label: "最後賞", desc: "3000長鳴珠 × 1位（最後一抽才會出）", count: 1, isLast: true },
+  { key: "A",    label: "A賞",    desc: "2580時裝 × 1套", count: 1 },
+  { key: "B",    label: "B賞",    desc: "1280時裝 × 1套", count: 2 },
+  { key: "C",    label: "C賞",    desc: "680時裝 × 1套",  count: 3 },
+  { key: "D",    label: "D賞",    desc: "300長鳴珠",      count: 5 },
+  { key: "E",    label: "E賞",    desc: "180長鳴珠",      count: 8 },
+  { key: "F",    label: "F賞",    desc: "60長鳴珠",       count: 13 },
+  { key: "LAST", label: "最後賞", desc: "3000長鳴珠（最後一位加碼）", count: 1, isLast: true },
 ];
 
 function buildInitialState(){
-  // 建立 30 個「一般獎」名額池（A~F） + lastReserved = true
   const pool = {};
   for (const p of PRIZES) pool[p.key] = p.count;
-
   return {
-    pool, // 各類剩餘
-    logs: [], // {idx, name, prizeKey, prizeLabel, prizeDesc, at}
-    usedNames: {}, // name -> true（避免同名重複抽）
+    pool,
+    logs: [],      // {idx, name, prizeKey, prizeLabel, prizeDesc, at, lastBonus}
+    usedNames: {}, // name -> true
     createdAt: new Date().toISOString(),
   };
 }
-
 function loadState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     if(!raw) return buildInitialState();
     const st = JSON.parse(raw);
-    // 基本補齊
     if(!st.pool || !st.logs || !st.usedNames) return buildInitialState();
     return st;
   }catch(e){
     return buildInitialState();
   }
 }
-
-function saveState(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
-
-function totalRemaining(){
-  return Object.values(state.pool).reduce((a,b)=>a+b,0);
-}
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
 function totalAll(){
-  return PRIZES.reduce((a,p)=>a+p.count,0);
+  return PRIZES.filter(p => p.key !== "LAST")
+               .reduce((a,p)=>a+p.count,0);
 }
-
 function remainingNonLast(){
   return Object.entries(state.pool)
     .filter(([k]) => k !== "LAST")
     .reduce((a,[,v]) => a+v, 0);
 }
+function totalRemaining(){ return remainingNonLast(); }
 
 function nowFmt(){
   const d = new Date();
@@ -332,7 +500,6 @@ function nowFmt(){
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 
-// 把 A~F 的剩餘名額攤平成「抽籤籤筒」
 function buildTicketsNonLast(){
   const tickets = [];
   for (const p of PRIZES){
@@ -342,12 +509,10 @@ function buildTicketsNonLast(){
   }
   return tickets;
 }
-
 function pickRandom(arr){
   const i = Math.floor(Math.random()*arr.length);
   return arr[i];
 }
-
 function prizeInfo(key){
   const p = PRIZES.find(x=>x.key===key);
   return p ? p : { key, label:key, desc:"" };
@@ -375,7 +540,322 @@ const prizeBig = $("prizeBig");
 const prizeDesc = $("prizeDesc");
 const whoText = $("whoText");
 
-// state
+// ---------- 音效（不可關閉） ----------
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AC();
+  }
+  if(audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
+}
+
+/**
+ * 用 WebAudio 合成音效：
+ * - D/E/F：短「啵」一下
+ * - C：上升三連音
+ * - B：更亮的上升＋小顫音
+ * - A：最炸（上升＋bling＋低鼓）
+ * - LAST bonus：額外加一段「叮叮叮」
+ */
+function playDrawSfx(tier, hasLastBonus){
+  ensureAudio();
+  const ctx = audioCtx;
+  const t0 = ctx.currentTime + 0.01;
+
+  const master = ctx.createGain();
+  master.gain.value = 0.55;
+  master.connect(ctx.destination);
+
+  const click = (time, freq, dur, type="triangle", gain=0.22) => {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, time);
+    g.gain.setValueAtTime(gain, time);
+    g.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+    o.connect(g); g.connect(master);
+    o.start(time); o.stop(time + dur + 0.02);
+  };
+
+  const whoosh = (time, dur=0.18, gain=0.16) => {
+    // 粗略的白噪「刷」一下
+    const bufferSize = Math.floor(ctx.sampleRate * dur);
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<bufferSize;i++){
+      data[i] = (Math.random()*2-1) * (1 - i/bufferSize);
+    }
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(gain, time);
+    g.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+
+    // filter
+    const f = ctx.createBiquadFilter();
+    f.type = "highpass";
+    f.frequency.setValueAtTime(900, time);
+
+    src.connect(f); f.connect(g); g.connect(master);
+    src.start(time); src.stop(time + dur + 0.02);
+  };
+
+  const lowThump = (time) => {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = "sine";
+    o.frequency.setValueAtTime(90, time);
+    o.frequency.exponentialRampToValueAtTime(45, time + 0.16);
+    g.gain.setValueAtTime(0.32, time);
+    g.gain.exponentialRampToValueAtTime(0.0001, time + 0.18);
+    o.connect(g); g.connect(master);
+    o.start(time); o.stop(time + 0.22);
+  };
+
+  // 基底：每次抽都有一個小 whoosh + click
+  whoosh(t0, 0.16, 0.15);
+  click(t0 + 0.02, 480, 0.07, "square", 0.10);
+
+  if(tier === "F" || tier === "E" || tier === "D"){
+    click(t0 + 0.08, 620, 0.10, "triangle", 0.18);
+  }else if(tier === "C"){
+    click(t0 + 0.06, 660, 0.10, "triangle", 0.18);
+    click(t0 + 0.16, 880, 0.10, "triangle", 0.18);
+    click(t0 + 0.26, 1100, 0.12, "triangle", 0.18);
+  }else if(tier === "B"){
+    click(t0 + 0.06, 740, 0.11, "triangle", 0.20);
+    click(t0 + 0.16, 1040, 0.11, "triangle", 0.20);
+    click(t0 + 0.26, 1480, 0.14, "triangle", 0.22);
+    click(t0 + 0.40, 1760, 0.12, "sine", 0.18);
+  }else if(tier === "A"){
+    lowThump(t0 + 0.02);
+    click(t0 + 0.08, 780, 0.12, "triangle", 0.22);
+    click(t0 + 0.20, 1180, 0.12, "triangle", 0.24);
+    click(t0 + 0.32, 1680, 0.14, "triangle", 0.26);
+    click(t0 + 0.48, 2100, 0.18, "sine", 0.20);
+    whoosh(t0 + 0.12, 0.22, 0.16);
+  }
+
+  if(hasLastBonus){
+    // 加碼叮叮叮
+    click(t0 + 0.62, 1320, 0.12, "sine", 0.18);
+    click(t0 + 0.76, 1560, 0.12, "sine", 0.18);
+    click(t0 + 0.90, 1960, 0.16, "sine", 0.20);
+  }
+}
+
+// ---------- 彩帶（A/B/C 專屬） ----------
+const fxCanvas = $("fxCanvas");
+const fx = fxCanvas.getContext("2d");
+let W = 0, H = 0;
+let particles = [];
+let rafId = null;
+
+function resizeFx(){
+  W = fxCanvas.width = Math.floor(window.innerWidth * devicePixelRatio);
+  H = fxCanvas.height = Math.floor(window.innerHeight * devicePixelRatio);
+  fx.setTransform(1,0,0,1,0,0);
+}
+window.addEventListener("resize", resizeFx);
+resizeFx();
+
+function rand(a,b){ return a + Math.random()*(b-a); }
+
+function spawnConfettiBurst(mode){
+  // mode: "A" | "B" | "C" | "LAST" | "SMALL"
+  const base = {
+    x: rand(W*0.25, W*0.75),
+    y: rand(H*0.12, H*0.22),
+  };
+
+  const paletteA = ["#ffd54a","#fff2b0","#ff77c8","#7c3aed","#22d3ee"];
+  const paletteB = ["#9bd2ff","#22d3ee","#b8d7ff","#f472b6","#e9eeff"];
+  const paletteC = ["#a6ffca","#86efac","#f472b6","#ffe08a","#e9eeff"];
+  const paletteLast = ["#ffd1dc","#ffd54a","#22d3ee","#f472b6","#ffffff"];
+
+  let count = 0;
+  let power = 0;
+  let spin = 0;
+  let grav = 0;
+  let drag = 0;
+  let shapes = ["rect"];
+
+  let colors = paletteC;
+
+  if(mode === "A"){
+    count = 220;
+    power = 22;
+    spin = 18;
+    grav = 0.22;
+    drag = 0.992;
+    shapes = ["rect","rect","star"]; // 多星星
+    colors = paletteA;
+  }else if(mode === "B"){
+    count = 160;
+    power = 18;
+    spin = 14;
+    grav = 0.24;
+    drag = 0.991;
+    shapes = ["rect","rect","circle"]; // 圓點混入
+    colors = paletteB;
+  }else if(mode === "C"){
+    count = 120;
+    power = 15;
+    spin = 12;
+    grav = 0.26;
+    drag = 0.990;
+    shapes = ["rect","heart","circle"]; // 愛心比較可愛
+    colors = paletteC;
+  }else if(mode === "LAST"){
+    count = 200;
+    power = 20;
+    spin = 16;
+    grav = 0.23;
+    drag = 0.992;
+    shapes = ["star","star","rect","circle"];
+    colors = paletteLast;
+  }else{
+    count = 60;
+    power = 12;
+    spin = 10;
+    grav = 0.28;
+    drag = 0.988;
+    shapes = ["rect"];
+    colors = ["#ffffff","#b8d7ff","#a6ffca","#ffd54a"];
+  }
+
+  for(let i=0;i<count;i++){
+    const a = rand(-Math.PI, Math.PI);
+    const sp = rand(power*0.35, power);
+    const vx = Math.cos(a)*sp * devicePixelRatio;
+    const vy = Math.sin(a)*sp * devicePixelRatio;
+
+    const shape = shapes[Math.floor(Math.random()*shapes.length)];
+    const size = (shape === "rect") ? rand(6, 14) : rand(6, 12);
+    const w = size * devicePixelRatio;
+    const h = rand(4, 10) * devicePixelRatio;
+
+    particles.push({
+      x: base.x,
+      y: base.y,
+      vx, vy,
+      r: rand(0, Math.PI*2),
+      vr: rand(-spin, spin) * 0.02,
+      w, h,
+      shape,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      life: 1.0,
+      drag,
+      grav: grav * devicePixelRatio,
+      sparkle: (mode==="A"||mode==="LAST") ? rand(0.15,0.45) : rand(0.05,0.25),
+    });
+  }
+
+  startFxLoop();
+}
+
+function drawStar(cx, cy, spikes, outerR, innerR, rot){
+  fx.save();
+  fx.translate(cx, cy);
+  fx.rotate(rot);
+  fx.beginPath();
+  let a = -Math.PI/2;
+  const step = Math.PI / spikes;
+  for(let i=0;i<spikes*2;i++){
+    const r = (i%2===0) ? outerR : innerR;
+    fx.lineTo(Math.cos(a)*r, Math.sin(a)*r);
+    a += step;
+  }
+  fx.closePath();
+  fx.fill();
+  fx.restore();
+}
+
+function drawHeart(cx, cy, s, rot){
+  fx.save();
+  fx.translate(cx, cy);
+  fx.rotate(rot);
+  fx.beginPath();
+  // 心形近似
+  const x = 0, y = 0;
+  fx.moveTo(x, y + s*0.25);
+  fx.bezierCurveTo(x, y, x - s*0.6, y, x - s*0.6, y + s*0.35);
+  fx.bezierCurveTo(x - s*0.6, y + s*0.75, x, y + s*0.90, x, y + s*1.10);
+  fx.bezierCurveTo(x, y + s*0.90, x + s*0.6, y + s*0.75, x + s*0.6, y + s*0.35);
+  fx.bezierCurveTo(x + s*0.6, y, x, y, x, y + s*0.25);
+  fx.closePath();
+  fx.fill();
+  fx.restore();
+}
+
+function startFxLoop(){
+  if(rafId) return;
+  const step = ()=>{
+    rafId = requestAnimationFrame(step);
+
+    fx.clearRect(0,0,W,H);
+
+    // 慢慢淡出（帶一點拖影感）
+    fx.save();
+    fx.globalAlpha = 0.08;
+    fx.fillStyle = "rgba(0,0,0,0.35)";
+    fx.fillRect(0,0,W,H);
+    fx.restore();
+
+    const next = [];
+    for(const p of particles){
+      p.vx *= p.drag;
+      p.vy *= p.drag;
+      p.vy += p.grav;
+
+      p.x += p.vx;
+      p.y += p.vy;
+      p.r += p.vr;
+
+      p.life -= 0.010; // 壽命
+      if(p.life <= 0) continue;
+
+      // 略做閃爍
+      const sparkle = 0.85 + Math.sin((1-p.life)*14 + p.x*0.002)*p.sparkle;
+      fx.globalAlpha = Math.max(0, Math.min(1, p.life)) * sparkle;
+
+      fx.fillStyle = p.color;
+
+      if(p.shape === "rect"){
+        fx.save();
+        fx.translate(p.x, p.y);
+        fx.rotate(p.r);
+        fx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        fx.restore();
+      }else if(p.shape === "circle"){
+        fx.beginPath();
+        fx.arc(p.x, p.y, Math.max(2, p.w*0.30), 0, Math.PI*2);
+        fx.fill();
+      }else if(p.shape === "star"){
+        drawStar(p.x, p.y, 5, Math.max(4,p.w*0.55), Math.max(2,p.w*0.25), p.r);
+      }else if(p.shape === "heart"){
+        drawHeart(p.x, p.y, Math.max(5,p.w*0.55), p.r);
+      }
+
+      // 邊界外也慢慢死掉
+      if(p.y < H*1.25 && p.x > -W*0.25 && p.x < W*1.25){
+        next.push(p);
+      }
+    }
+    particles = next;
+
+    if(particles.length === 0){
+      cancelAnimationFrame(rafId);
+      rafId = null;
+      fx.clearRect(0,0,W,H);
+    }
+  };
+  rafId = requestAnimationFrame(step);
+}
+
+// ---------- UI / 邏輯 ----------
 let state = loadState();
 renderAll();
 
@@ -385,25 +865,17 @@ function renderAll(){
   renderLogsSummary();
   renderButtonsState();
 }
-
 function renderStatus(){
   const rem = totalRemaining();
   statusTag.textContent = `剩餘 ${rem} / ${totalAll()}`;
 
   const lastLeft = state.pool["LAST"] || 0;
-  if(lastLeft === 1){
-    lastTag.textContent = `最後賞：保留中（最後一抽）`;
-  }else{
-    lastTag.textContent = `最後賞：已抽出`;
-  }
+  lastTag.textContent = (lastLeft === 1)
+    ? `最後賞：保留中（最後一位加碼）`
+    : `最後賞：已送出（最後一位）`;
 
-  if(rem === 0){
-    poolTag.textContent = "獎池已抽完";
-  }else{
-    poolTag.textContent = "獎池進行中";
-  }
+  poolTag.textContent = (rem === 0) ? "抽獎已結束" : "獎池進行中";
 }
-
 function renderPoolTable(){
   poolTable.innerHTML = "";
   for (const p of PRIZES){
@@ -426,7 +898,11 @@ function renderPoolTable(){
     poolTable.appendChild(tr);
   }
 }
-
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, (c)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
 function renderLogsSummary(){
   logTag.textContent = `已抽 ${state.logs.length} 人`;
   const last = state.logs[state.logs.length - 1];
@@ -434,30 +910,23 @@ function renderLogsSummary(){
     lastLogNote.textContent = "尚未有人抽獎。";
     return;
   }
+  const bonusText = last.lastBonus ? ` ＋ <span class="pill LAST">最後賞</span>` : "";
   lastLogNote.innerHTML = `
     上一抽：<span class="mono">${escapeHtml(last.name)}</span> → 
-    <span class="pill ${last.prizeKey}">${escapeHtml(last.prizeLabel)}</span>
+    <span class="pill ${last.prizeKey}">${escapeHtml(last.prizeLabel)}</span>${bonusText}
     <span class="mono">（#${last.idx}）</span><br>
     <span class="note mono">${escapeHtml(last.at)}</span>
   `;
 }
-
 function renderButtonsState(){
   const rem = totalRemaining();
   drawBtn.disabled = rem === 0;
   undoBtn.disabled = state.logs.length === 0;
 }
 
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, (c)=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-}
-
 function animateReveal(){
   revealCard.classList.remove("flip","glow");
   flashBar.classList.remove("on");
-  // 觸發 reflow
   void revealCard.offsetWidth;
   revealCard.classList.add("flip","glow");
   flashBar.classList.add("on");
@@ -466,7 +935,6 @@ function animateReveal(){
 function normalizeName(name){
   return name.trim().replace(/\s+/g," ");
 }
-
 function canDraw(name){
   if(!name) return { ok:false, msg:"請先輸入角色名字。" };
   if(name.length < 2) return { ok:false, msg:"角色名字太短啦（至少 2 字）。" };
@@ -475,33 +943,20 @@ function canDraw(name){
   return { ok:true };
 }
 
+/** 核心：永遠抽 A~F；若這抽後 A~F 剩 0 => 這人額外拿最後賞 */
 function doDraw(name){
-  const rem = totalRemaining();
-  const drawIndex = state.logs.length + 1; // 1..31
+  const drawIndex = state.logs.length + 1;
+  if(remainingNonLast() <= 0) return null;
 
-  // 若只剩最後賞 -> 直接給
-  const lastLeft = state.pool["LAST"] || 0;
-  const nonLastLeft = remainingNonLast();
+  const tickets = buildTicketsNonLast();
+  const prizeKey = pickRandom(tickets);
 
-  let prizeKey;
-
-  // 規則：最後賞保留到第 31 抽
-  if(drawIndex === totalAll()){
-    prizeKey = "LAST";
-  } else {
-    // 其他時候不能抽到 LAST
-    if(nonLastLeft <= 0){
-      // 理論上不會發生（因為最後賞保留到第31抽），但加保護
-      prizeKey = "LAST";
-    } else {
-      const tickets = buildTicketsNonLast();
-      prizeKey = pickRandom(tickets);
-    }
-  }
-
-  // 扣庫
   state.pool[prizeKey] = (state.pool[prizeKey] || 0) - 1;
   if(state.pool[prizeKey] < 0) state.pool[prizeKey] = 0;
+
+  const isLastDrawer = (remainingNonLast() === 0);
+  const giveLastBonus = isLastDrawer && (state.pool["LAST"] || 0) === 1;
+  if(giveLastBonus) state.pool["LAST"] = 0;
 
   const info = prizeInfo(prizeKey);
   const log = {
@@ -511,29 +966,50 @@ function doDraw(name){
     prizeLabel: info.label,
     prizeDesc: info.desc,
     at: nowFmt(),
+    lastBonus: giveLastBonus,
   };
 
   state.logs.push(log);
   state.usedNames[name] = true;
   saveState();
-
   return log;
 }
 
 function showReveal(log){
+  if(!log) return;
+
   drawMeta.textContent = `第 #${log.idx} 抽`;
-  prizeBig.textContent = `${log.prizeLabel}！`;
-  prizeDesc.textContent = log.prizeDesc;
   whoText.textContent = log.name;
 
+  if(log.lastBonus){
+    prizeBig.textContent = `${log.prizeLabel} ＋ 最後賞！`;
+    prizeDesc.textContent = `${log.prizeDesc}\n（加碼）最後賞：3000長鳴珠`;
+  }else{
+    prizeBig.textContent = `${log.prizeLabel}！`;
+    prizeDesc.textContent = log.prizeDesc;
+  }
   animateReveal();
 }
 
+// A/B/C 彩帶模式
+function fxForPrize(prizeKey, lastBonus){
+  // 最後賞加碼再補一波（跟本來抽到的獎疊加）
+  if(lastBonus) spawnConfettiBurst("LAST");
+
+  if(prizeKey === "A") spawnConfettiBurst("A");
+  else if(prizeKey === "B") spawnConfettiBurst("B");
+  else if(prizeKey === "C") spawnConfettiBurst("C");
+  else spawnConfettiBurst("SMALL");
+}
+
+// ---- events ----
 drawBtn.addEventListener("click", ()=>{
   const name = normalizeName(playerName.value);
   const ok = canDraw(name);
+
+  // ✅ 抽獎音效不可關閉：按抽獎就會播（錯誤也播一個短音）
   if(!ok.ok){
-    // 直接用卡片區顯示錯誤
+    playDrawSfx("F", false);
     drawMeta.textContent = "無法抽獎";
     prizeBig.textContent = "—";
     prizeDesc.textContent = ok.msg;
@@ -543,17 +1019,20 @@ drawBtn.addEventListener("click", ()=>{
   }
 
   const log = doDraw(name);
+
+  // ✅ 先播音效，再顯示結果（更有「開獎」感）
+  playDrawSfx(log.prizeKey, log.lastBonus);
+
   showReveal(log);
+  fxForPrize(log.prizeKey, log.lastBonus);
+
   renderAll();
   playerName.value = "";
   playerName.focus();
 });
 
 exportBtn.addEventListener("click", ()=>{
-  const data = {
-    exportedAt: new Date().toISOString(),
-    state,
-  };
+  const data = { exportedAt: new Date().toISOString(), state };
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -565,6 +1044,7 @@ exportBtn.addEventListener("click", ()=>{
 
 resetBtn.addEventListener("click", ()=>{
   if(!confirm("確定要重置整池？（庫存與紀錄都會清空）")) return;
+
   state = buildInitialState();
   saveState();
 
@@ -581,10 +1061,11 @@ undoBtn.addEventListener("click", ()=>{
   const last = state.logs.pop();
   if(!last) return;
 
-  // 回補庫存
   state.pool[last.prizeKey] = (state.pool[last.prizeKey] || 0) + 1;
+  if(last.lastBonus){
+    state.pool["LAST"] = 1;
+  }
 
-  // 回收名字使用權（只要該名字不在其他紀錄裡）
   const stillUsed = state.logs.some(x => x.name === last.name);
   if(!stillUsed) delete state.usedNames[last.name];
 
