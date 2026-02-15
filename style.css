@@ -1,0 +1,101 @@
+/* ====== 依獎級變色（卡片主體/邊框/徽章）====== */
+/* 先給 revealCard 一個 data-tier，用 CSS 控制色調 */
+#revealCard{
+  --tier1: rgba(255,255,255,.10);
+  --tier2: rgba(255,255,255,.06);
+  --tierGlow: rgba(255,255,255,.12);
+  --tierBorder: rgba(255,255,255,.25);
+  --tierText: rgba(255,255,255,.90);
+}
+
+/* 卡片內部更亮一點，並吃 tier 色 */
+#revealCard .face{
+  background:
+    radial-gradient(900px 420px at 20% 0%, var(--tier1), transparent 60%),
+    radial-gradient(900px 420px at 80% 10%, var(--tier2), transparent 62%);
+}
+
+/* tier 彩色光暈：疊在卡片最上層，但不擋內容 */
+#revealCard::after{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  pointer-events:none;
+  background:
+    radial-gradient(700px 260px at 50% 0%, var(--tierGlow), transparent 60%),
+    radial-gradient(520px 220px at 20% 30%, var(--tierGlow), transparent 65%),
+    radial-gradient(520px 220px at 80% 30%, var(--tierGlow), transparent 65%);
+  filter: blur(18px);
+  opacity:.55;
+}
+
+/* 讓 badge 也跟著變色 */
+#revealCard .badge{
+  border-color: var(--tierBorder);
+  color: var(--tierText);
+  background: rgba(255,255,255,.10);
+}
+
+/* 額外：big 文字帶點 glow */
+#revealCard .big{
+  text-shadow:
+    0 10px 40px rgba(0,0,0,.35),
+    0 0 30px var(--tierGlow);
+}
+
+/* --- 各獎級色盤 --- */
+/* A：金 + 粉（最炸） */
+#revealCard[data-tier="A"]{
+  --tier1: rgba(251,191,36,.32);
+  --tier2: rgba(244,114,182,.18);
+  --tierGlow: rgba(251,191,36,.22);
+  --tierBorder: rgba(251,191,36,.55);
+  --tierText: rgba(255,240,200,.95);
+}
+
+/* B：藍 + 青（清亮） */
+#revealCard[data-tier="B"]{
+  --tier1: rgba(147,197,253,.26);
+  --tier2: rgba(34,211,238,.18);
+  --tierGlow: rgba(34,211,238,.20);
+  --tierBorder: rgba(34,211,238,.55);
+  --tierText: rgba(235,250,255,.95);
+}
+
+/* C：綠 + 粉（可愛系） */
+#revealCard[data-tier="C"]{
+  --tier1: rgba(134,239,172,.24);
+  --tier2: rgba(244,114,182,.16);
+  --tierGlow: rgba(134,239,172,.18);
+  --tierBorder: rgba(134,239,172,.55);
+  --tierText: rgba(235,255,245,.95);
+}
+
+/* D/E/F：一般（白） */
+#revealCard[data-tier="D"],
+#revealCard[data-tier="E"],
+#revealCard[data-tier="F"]{
+  --tier1: rgba(255,255,255,.12);
+  --tier2: rgba(255,255,255,.06);
+  --tierGlow: rgba(255,255,255,.14);
+  --tierBorder: rgba(255,255,255,.28);
+  --tierText: rgba(255,255,255,.90);
+}
+
+/* LAST：粉金（加碼感） */
+#revealCard[data-tier="LAST"]{
+  --tier1: rgba(244,114,182,.22);
+  --tier2: rgba(251,191,36,.20);
+  --tierGlow: rgba(244,114,182,.20);
+  --tierBorder: rgba(244,114,182,.55);
+  --tierText: rgba(255,235,245,.95);
+}
+
+/* 狀態：錯誤/等待（灰） */
+#revealCard[data-tier="NONE"]{
+  --tier1: rgba(255,255,255,.08);
+  --tier2: rgba(255,255,255,.04);
+  --tierGlow: rgba(255,255,255,.10);
+  --tierBorder: rgba(255,255,255,.22);
+  --tierText: rgba(255,255,255,.86);
+}
