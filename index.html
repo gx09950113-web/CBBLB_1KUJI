@@ -41,7 +41,6 @@
       overflow-x:hidden;
     }
 
-    /* 漂浮亮點 */
     body:before{
       content:"";
       position:fixed;
@@ -334,10 +333,9 @@
     .pill.A{color:#ffe08a}
     .pill.B{color:#b8d7ff}
     .pill.C{color:#a6ffca}
-    .pill.D,.pill.E,.pill.F{color:#ffffff}
+    .pill.D,.pill.E{color:#ffffff}
     .pill.LAST{color:#ffd1dc}
 
-    /* ✅ 彩帶 canvas 疊在最上層 */
     #fxCanvas{
       position:fixed;
       inset:0;
@@ -355,13 +353,11 @@
       --tierBorder: rgba(255,255,255,.25);
       --tierText: rgba(255,255,255,.90);
     }
-
     #revealCard .face{
       background:
         radial-gradient(900px 420px at 20% 0%, var(--tier1), transparent 60%),
         radial-gradient(900px 420px at 80% 10%, var(--tier2), transparent 62%);
     }
-
     #revealCard::after{
       content:"";
       position:absolute;
@@ -374,19 +370,18 @@
       filter: blur(18px);
       opacity:.55;
     }
-
     #revealCard .badge{
       border-color: var(--tierBorder);
       color: var(--tierText);
       background: rgba(255,255,255,.10);
     }
-
     #revealCard .big{
       text-shadow:
         0 10px 40px rgba(0,0,0,.35),
         0 0 30px var(--tierGlow);
     }
 
+    /* A/B/C/D/E/LAST/NONE 色盤 */
     #revealCard[data-tier="A"]{
       --tier1: rgba(251,191,36,.32);
       --tier2: rgba(244,114,182,.18);
@@ -394,7 +389,6 @@
       --tierBorder: rgba(251,191,36,.55);
       --tierText: rgba(255,240,200,.95);
     }
-
     #revealCard[data-tier="B"]{
       --tier1: rgba(147,197,253,.26);
       --tier2: rgba(34,211,238,.18);
@@ -402,7 +396,6 @@
       --tierBorder: rgba(34,211,238,.55);
       --tierText: rgba(235,250,255,.95);
     }
-
     #revealCard[data-tier="C"]{
       --tier1: rgba(134,239,172,.24);
       --tier2: rgba(244,114,182,.16);
@@ -410,17 +403,14 @@
       --tierBorder: rgba(134,239,172,.55);
       --tierText: rgba(235,255,245,.95);
     }
-
     #revealCard[data-tier="D"],
-    #revealCard[data-tier="E"],
-    #revealCard[data-tier="F"]{
+    #revealCard[data-tier="E"]{
       --tier1: rgba(255,255,255,.12);
       --tier2: rgba(255,255,255,.06);
       --tierGlow: rgba(255,255,255,.14);
       --tierBorder: rgba(255,255,255,.28);
       --tierText: rgba(255,255,255,.90);
     }
-
     #revealCard[data-tier="LAST"]{
       --tier1: rgba(244,114,182,.22);
       --tier2: rgba(251,191,36,.20);
@@ -428,7 +418,6 @@
       --tierBorder: rgba(244,114,182,.55);
       --tierText: rgba(255,235,245,.95);
     }
-
     #revealCard[data-tier="NONE"]{
       --tier1: rgba(255,255,255,.08);
       --tier2: rgba(255,255,255,.04);
@@ -538,17 +527,16 @@
  * ✅ 依獎級變色：卡片依 data-tier 切換色調
  */
 
-const STORAGE_KEY = "ichiban_lottery_v4_bonus_last_confetti_sound_tier";
+const STORAGE_KEY = "ichiban_lottery_v5_new_prize_set";
 
-/** ✅ 你指定：F = 13，A~F 合計 32 抽 / 32 人 */
+/** ✅ 新獎項（A~E 共 19 抽），最後一位加碼最後賞（時裝） */
 const PRIZES = [
-  { key: "A",    label: "A賞",    desc: "2580時裝 × 1套", count: 1 },
-  { key: "B",    label: "B賞",    desc: "1280時裝 × 1套", count: 2 },
-  { key: "C",    label: "C賞",    desc: "680時裝 × 1套",  count: 3 },
+  { key: "A",    label: "A賞",    desc: "1800長鳴珠",     count: 1 },
+  { key: "B",    label: "B賞",    desc: "900長鳴珠",      count: 2 },
+  { key: "C",    label: "C賞",    desc: "600長鳴珠",      count: 3 },
   { key: "D",    label: "D賞",    desc: "300長鳴珠",      count: 5 },
   { key: "E",    label: "E賞",    desc: "180長鳴珠",      count: 8 },
-  { key: "F",    label: "F賞",    desc: "60長鳴珠",       count: 13 },
-  { key: "LAST", label: "最後賞", desc: "3000長鳴珠（最後一位加碼）", count: 1, isLast: true },
+  { key: "LAST", label: "最後賞", desc: "2580時裝 × 1套（最後一位加碼）", count: 1, isLast: true },
 ];
 
 // ---------- state ----------
@@ -575,7 +563,7 @@ function loadState(){
 }
 function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
-// 抽獎人數只算 A~F（不含 LAST）
+// 抽獎人數只算 A~E（不含 LAST）
 function totalAll(){
   return PRIZES.filter(p => p.key !== "LAST")
                .reduce((a,p)=>a+p.count,0);
@@ -614,7 +602,6 @@ function prizeInfo(key){
 const $ = (id)=>document.getElementById(id);
 
 const fxCanvas = $("fxCanvas");
-
 const playerName = $("playerName");
 const drawBtn = $("drawBtn");
 const exportBtn = $("exportBtn");
@@ -637,7 +624,6 @@ const whoText = $("whoText");
 
 // ---------- Tier Visual (依獎級變色) ----------
 function setTierVisual(tier){
-  // tier: "A"|"B"|"C"|"D"|"E"|"F"|"LAST"|"NONE"
   revealCard.dataset.tier = tier || "NONE";
 }
 
@@ -704,11 +690,11 @@ function playDrawSfx(tier, hasLastBonus){
     o.start(time); o.stop(time + 0.22);
   };
 
-  // 每次抽都有一個 whoosh + click
   whoosh(t0, 0.16, 0.15);
   click(t0 + 0.02, 480, 0.07, "square", 0.10);
 
-  if(tier === "F" || tier === "E" || tier === "D"){
+  // 只有 A/B/C 才做更華麗的旋律
+  if(tier === "E" || tier === "D"){
     click(t0 + 0.08, 620, 0.10, "triangle", 0.18);
   }else if(tier === "C"){
     click(t0 + 0.06, 660, 0.10, "triangle", 0.18);
@@ -848,7 +834,6 @@ function startFxLoop(){
 
     fx.clearRect(0,0,W,H);
 
-    // 輕拖影
     fx.save();
     fx.globalAlpha = 0.08;
     fx.fillStyle = "rgba(0,0,0,0.35)";
@@ -870,7 +855,6 @@ function startFxLoop(){
 
       const sparkle = 0.85 + Math.sin((1-p.life)*14 + p.x*0.002)*p.sparkle;
       fx.globalAlpha = Math.max(0, Math.min(1, p.life)) * sparkle;
-
       fx.fillStyle = p.color;
 
       if(p.shape === "rect"){
@@ -1001,7 +985,7 @@ function canDraw(name){
   return { ok:true };
 }
 
-/** 核心：永遠抽 A~F；若這抽後 A~F 剩 0 => 這人額外拿最後賞 */
+/** 核心：永遠抽 A~E；若這抽後 A~E 剩 0 => 這人額外拿最後賞（時裝） */
 function doDraw(name){
   const drawIndex = state.logs.length + 1;
   if(remainingNonLast() <= 0) return null;
@@ -1036,7 +1020,6 @@ function doDraw(name){
 function showReveal(log){
   if(!log) return;
 
-  // ✅ 先依本次獎級上色
   setTierVisual(log.prizeKey);
 
   drawMeta.textContent = `第 #${log.idx} 抽`;
@@ -1044,9 +1027,7 @@ function showReveal(log){
 
   if(log.lastBonus){
     prizeBig.textContent = `${log.prizeLabel} ＋ 最後賞！`;
-    prizeDesc.textContent = `${log.prizeDesc}\n（加碼）最後賞：3000長鳴珠`;
-
-    // ✅ 加碼最後賞時，強制切到 LAST 色盤（更像加碼）
+    prizeDesc.textContent = `${log.prizeDesc}\n（加碼）最後賞：2580時裝 × 1套`;
     setTierVisual("LAST");
   }else{
     prizeBig.textContent = `${log.prizeLabel}！`;
@@ -1061,9 +1042,8 @@ drawBtn.addEventListener("click", ()=>{
   const name = normalizeName(playerName.value);
   const ok = canDraw(name);
 
-  // ✅ 抽獎音效不可關閉：按抽獎就會播（錯誤也播）
   if(!ok.ok){
-    playDrawSfx("F", false);
+    playDrawSfx("E", false);
     setTierVisual("NONE");
     drawMeta.textContent = "無法抽獎";
     prizeBig.textContent = "—";
@@ -1075,9 +1055,7 @@ drawBtn.addEventListener("click", ()=>{
 
   const log = doDraw(name);
 
-  // ✅ 先播音效，再顯示結果（更有開獎感）
   playDrawSfx(log.prizeKey, log.lastBonus);
-
   showReveal(log);
   fxForPrize(log.prizeKey, log.lastBonus);
 
@@ -1137,7 +1115,6 @@ undoBtn.addEventListener("click", ()=>{
   renderAll();
 });
 
-// Enter 直接抽
 playerName.addEventListener("keydown", (e)=>{
   if(e.key === "Enter") drawBtn.click();
 });
